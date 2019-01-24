@@ -1,0 +1,202 @@
+﻿@model UniversityManagementSystemWebApp.Models.EnrollStudent
+
+@{
+    ViewBag.Title = "EnrollCourseForStudents";
+}
+
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Contents/bootstrap-datepicker3.min.css" rel="stylesheet" />
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+@* validation message color *@
+<style>
+    .error-message {
+        color: red;
+    }
+</style>
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("EnrollCourseForStudents","Student")">Enroll Course to Student</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Register Student", "RegisterStudent", "Student")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>Enroll Course to Student</h3>
+<p>Enroll with new course</p>
+<hr />
+
+<div class="form-body">
+
+    @* for show message after button click *@
+
+    @if (ViewBag.Response == "Empty")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Enrolled!</strong> Please select or fill up all fields correctly.
+        </div>
+    }
+    else if (ViewBag.Response == "Exists")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Enrolled!</strong> Already Enrolled.
+        </div>
+    }
+    else if (ViewBag.Response == "Success")
+    {
+        <div class="alert alert-success alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> Enrolled successfully.
+        </div>
+    }
+    else if (ViewBag.Response == "Failed")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong> An error occured during enroll.
+        </div>
+    }
+
+    @* start form (Enroll Student) *@
+
+    @using (Html.BeginForm())
+    {
+        @Html.Label("Reg No")
+        <br />
+        @Html.DropDownListFor(x=>x.StudentId, new SelectList(ViewBag.Students, "Value", "Text"))
+        <br/>
+        @Html.ValidationMessageFor(x=>x.StudentId, null, new {@class="error-message"})
+        <br/>
+
+        @Html.Label("Name")
+        <br />
+        @Html.TextBox("Name", null, new { disabled = "disabled" })
+        <br />
+
+        @Html.Label("Email")
+        <br />
+        @Html.TextBox("Email", null, new { disabled = "disabled" })
+        <br />
+
+        @Html.Label("Department")
+        <br />
+        @Html.TextBox("Department", null, new { disabled = "disabled" })
+        <br />
+
+        @Html.Label("Course")
+        <br />
+        @Html.DropDownListFor(x=>x.CourseId, new SelectList(""), "--Select Course--")
+        <br/>
+        @Html.ValidationMessageFor(x => x.CourseId, null, new { @class = "error-message" })
+        <br/>
+
+        @Html.Label("Date")
+        <br />
+        @Html.TextBoxFor(x=>x.Date)
+        <br/>
+        @Html.ValidationMessageFor(x => x.Date, null, new { @class = "error-message" })
+        <br/>
+        
+        <input type="submit" value="Enroll" />
+    }
+
+</div>
+
+
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    $('#Date').datepicker({
+        format: "dd/mm/yyyy",
+        todayBtn: "linked",
+        daysOfWeekHighlighted: "5",
+        calendarWeeks: true,
+        autoclose: true,
+        todayHighlight: true,
+        toggleActive: true
+    });
+
+    $("#Date").datepicker('setDate', new Date());
+
+    $('#StudentId').val(SelectedOrderBy);
+</script>
+
+
+@section scripts
+{
+    
+    <script>
+        //get student info by student id
+        $(document).ready(function () {
+
+            $("#StudentId").change(function () {
+                var id = $("#StudentId").val();
+                var json = { id: id };
+
+                $("#Name").val("");
+                $("#Email").val("");
+                $("#Department").val("");
+
+                $("#CourseId").empty();
+                $("#CourseId").append('<option value="">--Select Course--</option>');
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetStudentInfoById", "Student")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+
+                        $("#Name").val(data.Name);
+                        $("#Email").val(data.Email);
+                        $("#Department").val(data.DepartmentName);
+                    }
+                });
+            });
+        });
+
+        //get all courses by student department
+        $(document).ready(function () {
+
+            $("#StudentId").change(function () {
+                var id = $("#StudentId").val();
+                var json = { id: id };
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCoursesByStudentDepartment", "Student")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+                        $("#CourseId").empty();
+                        $("#CourseId").append('<option value="">--Select Course--</option>');
+
+                        $.each(data, function (key, value) {
+                            $("#CourseId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
+

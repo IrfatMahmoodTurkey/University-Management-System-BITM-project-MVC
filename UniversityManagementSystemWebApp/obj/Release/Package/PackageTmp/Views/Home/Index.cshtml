@@ -1,0 +1,311 @@
+﻿@using UniversityManagementSystemWebApp.Models.ViewModel
+@{
+    Layout = null;
+}
+
+<link href="~/Content/home-style.css" rel="stylesheet" />
+<link href="~/css/font-awesome.min.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/Datatables/jquery.dataTables.min.css" rel="stylesheet" />
+
+<style>
+    table {
+        margin: auto;
+        border-collapse: collapse;
+        width: 80%;
+    }
+
+    table td, table th {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 12px;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    table thead {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #2E7D32;
+        color: white;
+    }
+
+    .slide-color {
+        background-color: #EEEEEE;
+        color: #212121;
+    }
+</style>
+
+<title>Home- University Management System</title>
+
+<body class="w3-light-grey">
+
+    <!-- Top container -->
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+        <span class="w3-bar-item w3-left">University Management System</span>
+    </div>
+
+    <!-- Sidebar/menu -->
+    <nav class="w3-sidebar w3-collapse slide-color w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+        <br>
+        <div class="w3-container w3-row">
+            <div class="w3-col s4">
+                <img src="~/Images/user-avater.png" class="w3-circle w3-margin-right" style="width: 46px" />
+            </div>
+            <div class="w3-col s8 w3-bar">
+                <span>Welcome, <strong>Admin</strong></span><br>
+                <span>Date: <strong>@ViewBag.Date</strong></span>
+            </div>
+        </div>
+        <hr>
+        <div class="w3-container">
+            <h5>Dashboard</h5>
+        </div>
+        <div class="w3-bar-block">
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-users fa-fw" style="color: green"></i> Overview</a>
+            <a href="@Url.Action("Save", "Department")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-save fa-fw" style="color: green; "></i> Save Department</a>
+            <a href="@Url.Action("ViewAllDepartments", "Department")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw" style="color: green; "></i>View All Departments</a>
+            <a href="@Url.Action("SaveCourse", "Course")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-save fa-fw" style="color: green; "></i>Save Course</a>
+            <a href="@Url.Action("SaveTeacher", "Teacher")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user fa-fw" style="color: green; "></i>Save Teacher</a>
+            <a href="@Url.Action("AssignCourseToTeacher", "Teacher")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-pencil fa-fw" style="color: green; "></i>Course Assign to Teacher</a>
+            <a href="@Url.Action("ViewCourseStatics", "Course")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw" style="color: green; "></i>View Course Statics</a>
+            <a href="@Url.Action("RegisterStudent", "Student")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user fa-fw" style="color: green; "></i>Register Student</a>
+            <a href="@Url.Action("AllocateClassrooms", "AllocateClassroom")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-clock-o fa-fw" style="color: green; "></i>Allocate Classrooms</a>
+            <a href="@Url.Action("ViewClassAllocation", "AllocateClassroom")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-info fa-fw" style="color: green; "></i>View Classroom allocation info</a>
+            <a href="@Url.Action("EnrollCourseForStudents", "Student")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-pencil fa-fw" style="color: green; "></i>Enroll Courses for Student</a>
+            <a href="@Url.Action("SaveResult", "Student")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-upload fa-fw" style="color: green; "></i>Save Result</a>
+            <a href="@Url.Action("ViewStudentResult", "Student")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw" style="color: green; "></i>View Result</a>
+            <a href="@Url.Action("UnAssignCourse", "UnAssignCourse")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-undo fa-fw" style="color: green; "></i>Unassign All Courses</a>
+            <a href="@Url.Action("UnAllocateClassrooms", "UnAllocateAllClassrooms")" class="w3-bar-item w3-button w3-padding"><i class="fa fa-undo fa-fw" style="color: green;"></i>Unallocate Classrooms</a>
+            <a href="" class="w3-bar-item w3-button w3-padding"><i class="fa fa-question fa-fw" style="color: green; "></i>Help</a>
+        </div>
+        <br />
+        <br />
+    </nav>
+
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+        <!-- Header -->
+        <header class="w3-container" style="padding-top:22px">
+            <h5><b><i class="fa fa-dashboard"></i> My Dashboard</b></h5>
+        </header>
+
+        <div class="w3-row-padding w3-margin-bottom">
+            <div class="w3-quarter">
+                <div class="w3-container w3-red w3-padding-16">
+                    <div class="w3-right"><img src="~/Images/department.png" width="80px" /></div>
+                    <div class="w3-left">
+                        <h1>@ViewBag.Departments</h1>
+                    </div>
+                    <div class="w3-clear"></div>
+                    <h4>Total Departments</h4>
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="w3-container w3-red w3-padding-16">
+                    <div class="w3-right">
+                        <img src="~/Images/teacher.png" width="80px" />
+                    </div>
+                    <div class="w3-left">
+                        <h1>@ViewBag.Teachers</h1>
+                    </div>
+                    <div class="w3-clear"></div>
+                    <h4>Total Teachers</h4>
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="w3-container w3-red w3-padding-16">
+                    <div class="w3-right">
+                        <img src="~/Images/student.png" width="80px" />
+                    </div>
+                    <div class="w3-left">
+                        <h1>@ViewBag.StudentsRegisterd</h1>
+                    </div>
+                    <div class="w3-clear"></div>
+                    <h4>Registered Students</h4>
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="w3-container w3-red w3-padding-16">
+                    <div class="w3-right">
+                        <img src="~/Images/classroom.png" width="80px" />
+                    </div>
+                    <div class="w3-left">
+                        <h1>@ViewBag.Classrooms</h1>
+                    </div>
+                    <div class="w3-clear"></div>
+                    <h4>Total Classrooms</h4>
+                </div>
+            </div>
+            <br />
+
+        </div>
+        <hr/>
+
+        <h3 style="text-align: center">Student Information</h3>
+        <hr>
+        <table id="table3" class="display" style="width: 100%;">
+            <thead>
+                <tr>
+                    <td>
+                        RegNo
+                    </td>
+                    <td>
+                        Name
+                    </td>
+                    <td>
+                        Email
+                    </td>
+                    <td>
+                        Phone
+                    </td>
+                    <td>
+                        Date of Registration
+                    </td>
+                    <td>
+                        Department
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (StudentInfoHomeViewModel student in ViewBag.StudentInfo)
+                {
+                    <tr>
+                        <td>@student.RegNo</td>
+                        <td>@student.Name</td>
+                        <td>@student.Email</td>
+                        <td>@student.Phone</td>
+                        <td>@student.Date</td>
+                        <td>@student.Department</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h3 style="text-align: center">Registered Student By Year</h3>
+        <hr>
+        <table id="table1" class="display" style="width: 100%;">
+            <thead>
+                <tr>
+                    <td>
+                        Year
+                    </td>
+                    <td>
+                        Registered Students
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (StudentByYearViewModel student in ViewBag.StudentByYear)
+                {
+                    <tr>
+                        <td>@student.Year</td>
+                        <td>@student.StudentNo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h3 style="text-align: center">Teacher Information</h3>
+        <hr>
+        <table id="table2" class="display" style="width: 100%;">
+            <thead>
+                <tr>
+                    <td>
+                        Name
+                    </td>
+                    <td>
+                        Address
+                    </td>
+                    <td>
+                        Email
+                    </td>
+                    <td>
+                        Phone
+                    </td>
+                    <td>
+                        Designation
+                    </td>
+                    <td>
+                        Department
+                    </td>
+                    <td>
+                        Credit Taken
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (TeacherInfoHomeViewModel teacher in ViewBag.TeachersInfo)
+                {
+                    <tr>
+                        <td>@teacher.Name</td>
+                        <td>@teacher.Address</td>
+                        <td>@teacher.Email</td>
+                        <td>@teacher.Phone</td>
+                        <td>@teacher.Designation</td>
+                        <td>@teacher.Department</td>
+                        <td>@teacher.CreditTaken</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        
+        <!-- End page content -->
+
+        <hr/>
+        <footer>
+            <p>&copy; @DateTime.Now.Year - CrazyCoders</p>
+        </footer>
+    </div>
+
+    <script src="~/Scripts/jquery-1.12.4.min.js"></script>
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>
+
+    <script>
+        // Get the Sidebar
+        var mySidebar = document.getElementById("mySidebar");
+
+        // Get the DIV with overlay effect
+        var overlayBg = document.getElementById("myOverlay");
+
+        // Toggle between showing and hiding the sidebar, and add overlay effect
+        function w3_open() {
+            if (mySidebar.style.display === 'block') {
+                mySidebar.style.display = 'none';
+                overlayBg.style.display = "none";
+            } else {
+                mySidebar.style.display = 'block';
+                overlayBg.style.display = "block";
+            }
+        }
+
+        // Close the sidebar with the close button
+        function w3_close() {
+            mySidebar.style.display = "none";
+            overlayBg.style.display = "none";
+        }
+
+
+        $(document).ready(function () {
+            $('#table1').DataTable();
+        });
+
+        $(document).ready(function () {
+            $('#table2').DataTable();
+        });
+
+        $(document).ready(function () {
+            $('#table3').DataTable();
+        });
+    </script>
+</body>

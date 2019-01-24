@@ -1,0 +1,74 @@
+﻿@using UniversityManagementSystemWebApp.Models.ViewModel
+
+@{
+    ViewBag.Title = "DataShow";
+}
+
+<link href="~/Content/form-style.css" rel="stylesheet"/>
+<style>
+    #info {
+        color: #2e7d32;
+        font-size: 18px;
+    }
+</style>
+
+
+<div id="all-head">
+    <span><h2>Student Result</h2></span>
+</div>
+
+<div class="form-body">
+    <h3>@ViewBag.Name</h3>
+    <h5>@ViewBag.RegNo</h5>
+    <hr/>
+    <br/>
+
+    <label>RegNo: </label>
+    <label id="info">@ViewBag.RegNo</label>
+    <br/>
+
+    <label>Name: </label>
+    <label id="info">@ViewBag.Name</label>
+    <br/>
+
+    <label>Email Address: </label>
+    <label id="info">@ViewBag.Email</label>
+    <br/>
+
+    <label>Department: </label>
+    <label id="info">@ViewBag.Department</label>
+    <br/>
+    <hr/>
+</div>
+<br/>
+<br/>
+
+<h3 style="text-align: center">Detail Result</h3>
+
+<table id="table">
+    <thead>
+    <tr>
+        <td>
+            Code
+        </td>
+        <td>
+            Name
+        </td>
+        <td>
+            Grade
+        </td>
+    </tr>
+    </thead>
+    <tbody id="table-body">
+    @foreach (ResultViewModel resultViewModel in ViewBag.Result)
+    {
+        <tr>
+            <td>@resultViewModel.Code</td>
+            <td>@resultViewModel.Name</td>
+            <td>@resultViewModel.Grade</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+

@@ -1,0 +1,187 @@
+﻿@model UniversityManagementSystemWebApp.Models.AllocateClassRoom
+
+@{
+    ViewBag.Title = "AllocateClassRooms";
+}
+
+<link href="~/Content/form-style.css" rel="stylesheet"/>
+<link href="~/Content/time-picker/bootstrap-timepicker.min.css" rel="stylesheet" />
+
+@* for error message *@
+<style>
+    .error-message {
+        color: red;
+    }
+</style>
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("AllocateClassrooms","AllocateClassroom")">Allocate Classrooms</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("View Class Schedule and Room Information", "ViewClassAllocation", "AllocateClassroom")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>Allocate Classrooms</h3>
+<p>Set class schedule and set room for course</p>
+<hr />
+
+<div class="form-body">
+
+    @* for show message after button click *@
+
+    @if (ViewBag.Response == "Overlapped")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Overlapped!</strong>Schedule overlapped for selected day and room.
+        </div>
+    }
+    else if (ViewBag.Response == "Invalid")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Allocated!</strong> Invalid time. Check your time (Range must be at least 1 hour).
+        </div>
+    }
+    else if (ViewBag.Response == "Empty")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Saved!</strong> Select and fill up all fields correctly.
+        </div>
+    }
+    else if (ViewBag.Response == "Success")
+    {
+        <div class="alert alert-success alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong>Class Allocated successfully.
+        </div>
+    }
+    else if (ViewBag.Response == "Failed")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong> An error occured during allocate classroom.
+        </div>
+    }
+
+    @* start form (AllocateClassrooms)*@
+    
+
+    @using (Html.BeginForm())
+    {
+        @Html.LabelFor(x => x.DepartmentId, "Department")
+        <br />
+        @Html.DropDownListFor(x => x.DepartmentId, new SelectList(ViewBag.Departments, "Value", "Text"))
+        <br />
+        @Html.ValidationMessageFor(x => x.DepartmentId, null, new{@class="error-message"})
+        <br />
+
+        @Html.LabelFor(x => x.CourseId, "Course")
+        <br />
+        @Html.DropDownListFor(x => x.CourseId, new SelectList(""), "--Select Course--")
+        <br />
+        @Html.ValidationMessageFor(x => x.CourseId, null, new{@class="error-message"})
+        <br />
+
+        @Html.LabelFor(x => x.DepartmentId, "Room No")
+        <br />
+        @Html.DropDownListFor(x => x.RoomId, new SelectList(ViewBag.Rooms, "Value", "Text"))
+        <br />
+        @Html.ValidationMessageFor(x => x.RoomId, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.DayId, "Day")
+        <br />
+        @Html.DropDownListFor(x => x.DayId, new SelectList(ViewBag.Days, "Value", "Text"))
+        <br />
+        @Html.ValidationMessageFor(x => x.DayId, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.StartTime, "From Time")
+        <br/>
+        @Html.TextBoxFor(x => x.StartTime)
+        <br />
+        @Html.ValidationMessageFor(x => x.StartTime, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.EndTime, "To Time")
+        <br />
+        @Html.TextBoxFor(x => x.EndTime)
+        <br/>
+        @Html.ValidationMessageFor(x => x.EndTime, null, new { @class = "error-message" })
+        <br />
+
+        <input type="submit" value="Allocate" />
+
+    }
+    </div>
+
+    
+    <script src="~/Scripts/jquery-1.12.4.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/time-picker/bootstrap-timepicker.min.js"></script>
+
+<script>
+    $('#StartTime').timepicker({
+        template: true,
+        showInputs: false,
+        minuteStep: 5
+    });
+
+    $('#EndTime').timepicker({
+        template: true,
+        showInputs: false,
+        minuteStep: 5
+    });
+</script>
+
+
+@section scripts
+{
+
+    <script>
+        
+       
+        
+        //for load course by department
+
+        $(document).ready(function () {
+
+            $("#DepartmentId").change(function () {
+                var departmentId = $("#DepartmentId").val();
+                var json = { departmentId: departmentId };
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCourseByDepartment", "AllocateClassRoom")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+                        $("#CourseId").empty();
+                        $("#CourseId").append('<option value = "">--Select Course--</option>');
+
+                        $.each(data, function (key, value) {
+                            $("#CourseId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+
+
+    </script>
+    }

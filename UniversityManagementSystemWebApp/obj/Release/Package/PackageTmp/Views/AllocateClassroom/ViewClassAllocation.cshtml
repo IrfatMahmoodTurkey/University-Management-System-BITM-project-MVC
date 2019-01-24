@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "ViewClassAllocation";
+}
+
+
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("ViewClassAllocation","AllocateClassroom")">View ClassRoom Allocation and Schedules</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Allocate Classrooms", "AllocateClassrooms", "AllocateClassroom")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>View ClassRoom Allocation and Schedules</h3>
+<p>Show all class schedules by department</p>
+
+@* dropdown for select department *@
+<div class="form-body">
+    @Html.Label("Department")
+    <br/>
+    @Html.DropDownList("DepartmentId", new SelectList(ViewBag.Departments, "Value", "Text"))
+</div>
+<br />
+<br />
+@* table for view all course statics *@
+
+<table id="table">
+    <thead>
+    <tr>
+        <td>
+            Course Code
+        </td>
+        <td>
+            Name
+        </td>
+        <td>
+            Schedule Info
+        </td>
+    </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+</table>
+
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+
+@section scripts
+{
+    <script>
+            //for load course by department
+
+            $(document).ready(function () {
+
+                $("#DepartmentId").change(function () {
+                    var departmentId = $("#DepartmentId").val();
+                    var json = { departmentId: departmentId };
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GetScheduleByDepartmentId", "AllocateClassRoom")',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(json),
+                        success: function (data) {
+                            $("#table-body").empty();
+
+                            $.each(data, function (key, value) {
+                                $("#table-body").append('<tr><td>' + value.CourseCode + '</td><td>' + value.CourseName + '</td><td>' + value.ScheduleList + '</td></tr>');
+                            });
+                        }
+                    });
+                });
+            });
+    </script>
+}

@@ -1,0 +1,273 @@
+﻿@model UniversityManagementSystemWebApp.Models.AssignCourseToTeacher
+
+@{
+    ViewBag.Title = "AssignCourseToTeacher";
+}
+
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+@* validation message color *@
+<style>
+    .error-message {
+        color: red;
+    }
+</style>
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("AssignCourseToTeacher","Teacher")">Course Assign to Teacher</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Save Teacher", "SaveTeacher", "Teacher")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>Course Assign to Teacher</h3>
+<p>Assign a course to a teacher</p>
+<hr />
+
+<div class="form-body">
+
+    @* for show message after button click *@
+
+    @if (ViewBag.Response == "Empty")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Assigned!</strong> Select all fields correctly.
+        </div>
+    }
+    else if (ViewBag.Response == "Exists")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Assigned!</strong> Course already assigned.
+        </div>
+    }
+    else if (ViewBag.Response == "Success")
+    {
+        <div class="alert alert-success alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> Course assigned successfully.
+        </div>
+    }
+    else if (ViewBag.Response == "Failed")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong> An error occured during course assign.
+        </div>
+    }
+
+    @* start form (CourseAssign) *@
+
+    @using (Html.BeginForm("AssignCourseToTeacher", "Teacher", FormMethod.Post, new { onsubmit = "return show_alert();" }))
+    {
+        @Html.Label("Department")
+        <br/>
+        @Html.DropDownList("DepartmentId", new SelectList(ViewBag.Departments, "Value", "Text"))
+        <br/>
+
+        @Html.LabelFor(x => x.TeacherId, "Teacher")
+        <br/>
+        @Html.DropDownListFor(x => x.TeacherId, new SelectList(""), "--Select Teacher--")
+        <br/>
+        @Html.ValidationMessageFor(x=>x.TeacherId, null, new {@class="error-message"})
+        <br/>
+
+        @Html.Label("Credit to be Taken")
+        <br/>
+        @Html.TextBox("CreditTaken", null, new {disabled = "disabled"})
+        <br/>
+
+        @Html.Label("Remmaining Credit")
+        <br/>
+        @Html.TextBox("RemainingCredit", null, new {disabled = "disabled"})
+        <br/>
+
+        @Html.LabelFor(x => x.CourseId, "Course")
+        <br/>
+        @Html.DropDownListFor(x => x.CourseId, new SelectList(""), "--Select Course--")
+        <br/>
+        @Html.ValidationMessageFor(x=>x.CourseId, null, new {@class="error-message"})
+        <br/>
+
+        @Html.Label("Name")
+        <br/>
+        @Html.TextBox("CourseName", null, new {disabled = "disabled"})
+        <br/>
+
+        @Html.Label("Credit")
+        <br/>
+        @Html.TextBox("CourseCredit", null, new {disabled = "disabled"})
+        <br/>
+
+
+        <input type="submit" value="Assign"/>
+
+    }
+</div>
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+
+@section scripts
+{
+    @* load teacher and course after click department *@
+    <script>
+
+        //for load teacher by department
+
+        $(document).ready(function() {
+
+            $("#DepartmentId").change(function() {
+                var departmentId = $("#DepartmentId").val();
+                var json = { deptId: departmentId };
+
+                $("#TeacherId").empty();
+                $("#TeacherId").append('<option value="">--Select Teacher--</option>');
+                $("#CreditTaken").val("");
+                $("#RemainingCredit").val("");
+                $("#CourseName").val("");
+                $("#CourseCredit").val("");
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetAllTeacherByDepartment", "Teacher")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+                        $("#TeacherId").empty();
+                        $("#TeacherId").append('<option value="">--Select Teacher--</option>');
+                        $.each(data, function(key, value) {
+                            $("#TeacherId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+                        });
+
+                    }
+                });
+            });
+        });
+
+
+        //get course by department
+        $(document).ready(function() {
+
+            $("#DepartmentId").change(function() {
+                var departmentId = $("#DepartmentId").val();
+                var json = { deptId: departmentId };
+
+                $("#CourseId").empty();
+                $("#CourseId").append('<option value="">--Select Course--</option>');
+                $("#CreditTaken").val("");
+                $("#RemainingCredit").val("");
+                $("#CourseName").val("");
+                $("#CourseCredit").val("");
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetAllCourseByDepartment", "Teacher")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+                        $("#CourseId").empty();
+                        $("#CourseId").append('<option value="">--Select Course--</option>');
+                        $.each(data, function(key, value) {
+                            $("#CourseId").append('<option value=' + value.Id + '>' + value.Code + '</option>');
+                        });
+
+                    }
+                });
+            });
+        });
+
+        //get teacher info by teacher id
+        $(document).ready(function() {
+
+            $("#TeacherId").change(function() {
+                var teacherId = $("#TeacherId").val();
+                var json = { id: teacherId };
+
+                $("#CreditTaken").val("");
+                $("#RemainingCredit").val("");
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetTeacherInfoByTeacherId", "Teacher")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+
+                        $("#CreditTaken").val(data.CreditTaken);
+                        $("#RemainingCredit").val(data.RemainingCredit);
+                    }
+                });
+            });
+        });
+
+        //get course info by course
+        $(document).ready(function() {
+
+            $("#CourseId").change(function() {
+                var courseId = $("#CourseId").val();
+                var json = { courseId: courseId };
+
+                $("#CourseName").val("");
+                $("#CourseCredit").val("");
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCourseInfoByCourseId", "Teacher")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function(data) {
+
+                        $("#CourseName").val(data.Name);
+                        $("#CourseCredit").val(data.Credit);
+                    }
+                });
+            });
+        });
+
+
+        function show_alert() {
+
+            var type;
+            var remainingCredit = document.getElementById('RemainingCredit').value;
+            var courseCredit = document.getElementById('CourseCredit').value;
+
+            if (remainingCredit == "" || courseCredit == "") {
+                type = true;
+            } else {
+                var remainingCreditNo = Number(remainingCredit);
+                var courseCreditNo = Number(courseCredit);
+
+                if (courseCreditNo >= remainingCreditNo) {
+                    if (confirm("Do you want to assign course?")) {
+                        type = true;
+                    } else {
+                        type = false;
+                    }
+                } else {
+                    type = true;
+                }
+            }
+            return type;
+        }
+
+
+    </script>
+}
+
+

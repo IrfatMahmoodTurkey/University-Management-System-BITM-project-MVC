@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "ViewStudentResult";
+}
+
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+@* validation message color *@
+<style>
+    .error-message {
+        color: red;
+    }
+</style>
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("ViewStudentResult","Student")">View Result</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Save Result","SaveResult","Student")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>View Result</h3>
+<p>View student result by select student reg no</p>
+<hr />
+
+<div class="form-body">
+
+    @using (Html.BeginForm())
+    {
+        @Html.Label("Student RegNo")
+        <br/>
+        @Html.DropDownList("studentId", new SelectList(ViewBag.Students, "Value", "Text"))
+        <br/>
+
+        @Html.Label("Name")
+        <br/>
+        @Html.TextBox("Name", null, new {disabled = "disabled"})
+        <br/>
+
+        @Html.Label("Email")
+        <br/>
+        @Html.TextBox("Email", null, new {disabled = "disabled"})
+        <br/>
+
+        @Html.Label("Department")
+        <br/>
+        @Html.TextBox("Department", null, new {disabled = "disabled"})
+        <br/>
+
+        <input type="submit" value="Make PDF"/>
+    }
+</div>
+
+    <table id="table">
+    <thead>
+        <tr>
+            <td>Code</td>
+            <td>Name</td>
+            <td>Grade</td>
+        </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+</table>
+
+    <script src="~/Scripts/jquery-1.12.4.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    @section scripts
+{
+        <script>
+            //get student info student id
+            $(document).ready(function () {
+
+                $("#studentId").change(function () {
+                    var studentId = $("#studentId").val();
+                    var json = { studentId: studentId };
+
+                    $("#Name").val("");
+                    $("#Email").val("");
+                    $("#Department").val("");
+                    $("#table-body").empty();
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GetStudentById", "Student")',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(json),
+                        success: function (data) {
+
+                            $("#Name").val(data.Name);
+                            $("#Email").val(data.Email);
+                            $("#Department").val(data.DepartmentName);
+                        }
+                    });
+                });
+            });
+
+            //get result by student id
+            $(document).ready(function () {
+
+                $("#studentId").change(function () {
+                    var studentId = $("#studentId").val();
+                    var json = { studentId: studentId };
+
+                    $("#table-body").empty();
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GetResultByStudentId", "Student")',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(json),
+                        success: function (data) {
+                            $("#table-body").empty();
+                            $.each(data, function (key, value) {
+                                $("#table-body").append('<tr><td>' + value.Code + '</td><td>' + value.Name + '</td><td>' + value.Grade + '</td></tr>');
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    }
+

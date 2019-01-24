@@ -1,0 +1,135 @@
+﻿@using UniversityManagementSystemWebApp.Models
+@model UniversityManagementSystemWebApp.Models.Teacher
+
+@{
+    ViewBag.Title = "SaveTeacher";
+}
+
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+@* for error message *@
+<style>
+    .error-message {
+        color: red;
+    }
+</style>
+
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("SaveTeacher","Teacher")">Save Teacher</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Course Assign To Teacher", "AssignCourseToTeacher", "Teacher")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>Save Teacher</h3>
+<p>Entry new teacher information in database</p>
+<hr />
+
+<div class="form-body">
+
+    @* for show message after button click *@
+
+    @if (ViewBag.Response == "Empty")
+{
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Saved!</strong> Please fill up and select all fields correctly.
+        </div>
+}
+else if (ViewBag.Response == "Exists")
+{
+    <div class="alert alert-danger alert-dismissible fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Can not Saved!</strong> Email already exists.
+    </div>
+}
+else if (ViewBag.Response == "Success")
+{
+    <div class="alert alert-success alert-dismissible fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> Teacher information saved successfully.
+    </div>
+}
+else if (ViewBag.Response == "Failed")
+{
+    <div class="alert alert-danger alert-dismissible fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Failed!</strong> An error occured during saving teacher information.
+    </div>
+}
+
+
+    @* start form (SaveTeacher) *@
+    @using (Html.BeginForm())
+    {
+        @Html.LabelFor(x=>x.Name, "Name")
+        <br />
+        @Html.TextBoxFor(x=>x.Name, null, new{placeholder="Enter teacher name"})
+        <br />
+        @Html.ValidationMessageFor(x=>x.Name, null, new{@class="error-message"})
+        <br />
+
+        @Html.LabelFor(x=>x.Address, "Address")
+        <br />
+        @Html.TextBoxFor(x=>x.Address, null, new{placeholder="Enter teacher address"})
+        <br />
+        @Html.ValidationMessageFor(x=>x.Address, null, new{@class="error-message"})
+        <br />
+
+        @Html.LabelFor(x=>x.Email, "Email")
+        <br />
+        @Html.TextBoxFor(x=>x.Email, null, new{placeholder="Enter teacher email"})
+        <br />
+        @Html.ValidationMessageFor(x=>x.Email, null, new{@class="error-message"})
+        <br />
+
+        @Html.LabelFor(x=>x.ContactNo, "Contact No")
+        <br />
+        @Html.TextBoxFor(x=>x.ContactNo, null, new{placeholder="Enter teacher contact no"})
+        <br />
+
+        @Html.LabelFor(x=>x.DesignationId, "Designation")
+        <br />
+        @Html.DropDownListFor(x => x.DesignationId, new SelectList(ViewBag.DesignationId, "Value", "Text"))
+        <br />
+        @Html.ValidationMessageFor(x=>x.DesignationId, null, new{@class="error-message"})
+        <br />
+
+        @Html.LabelFor(x=>x.DepartmentId, "Department")
+        <br />
+        @Html.DropDownListFor(x => x.DepartmentId, new SelectList(ViewBag.DepartmentId, "Value", "Text"))
+        <br />
+        @Html.ValidationMessageFor(x=>x.DepartmentId, null, new{@class="error-message"})
+        <br />
+
+        @Html.LabelFor(x=>x.CreditTaken, "Credit to be taken")
+        <br />
+        @Html.TextBoxFor(x=>x.CreditTaken, null, new{placeholder="Enter credit to be taken"})
+        <br />
+        @Html.ValidationMessageFor(x=>x.CreditTaken, null, new{@class="error-message"})
+        <br />
+
+        <input type="submit" value="Save" />
+    }
+
+
+
+</div>
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

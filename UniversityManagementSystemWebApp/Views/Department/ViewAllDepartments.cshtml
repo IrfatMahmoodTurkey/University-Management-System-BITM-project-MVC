@@ -1,0 +1,52 @@
+﻿@using UniversityManagementSystemWebApp.Models
+
+@{
+    ViewBag.Title = "ViewAllDepartments";
+}
+
+
+<link href="~/Content/form-style.css" rel="stylesheet"/>
+
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("ViewAllDepartments","Department")">View All Departments</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Save Department", "Save", "Department")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>View All Departments</h3>
+<p>Show all entried departments</p>
+<hr/>
+
+@* table for show all departments *@
+<table id="table">
+    <thead>
+    <tr>
+        <td>Code</td>
+        <td>Name</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (Department department in ViewBag.Departments)
+    {
+        <tr>
+            <td>@department.Code</td>
+            <td>@department.Name</td>
+        </tr>
+    }
+    </tbody>
+</table>
+

@@ -1,0 +1,126 @@
+﻿@using UniversityManagementSystemWebApp.Models
+@model UniversityManagementSystemWebApp.Models.Course
+
+@{
+    ViewBag.Title = "SaveCourse";
+}
+
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+@* for error message *@
+<style>
+    .error-message {
+        color: red;
+    }
+</style>
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("SaveCourse","Course")">Save Course</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index", "Home")">Home</a></li>
+            <li>@Html.ActionLink("View Course Statics", "ViewCourseStatics","Course")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>Save Course</h3>
+<p>Entry new Course in database</p>
+<hr/>
+
+<div class="form-body">
+
+    @* for show message after button click *@
+
+    @if (ViewBag.Response == "Empty")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Saved!</strong> Please fill up all fields correctly.
+        </div>
+    }
+    else if (ViewBag.Response == "Exists")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Saved!</strong> Code or Name already exists.
+        </div>
+    }
+    else if (ViewBag.Response == "Success")
+    {
+        <div class="alert alert-success alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> Course saved successfully.
+        </div>
+    }
+    else if (ViewBag.Response == "Failed")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong> An error occured during saving course.
+        </div>
+    }
+
+    @* start form (SaveCourse)*@
+    
+    @using (Html.BeginForm())
+    {
+        @Html.LabelFor(x=>x.Code, "Code")
+        <br/>
+        @Html.TextBoxFor(x=>x.Code, null, new {placeholder="Enter course code"})
+        <br/>
+        @Html.ValidationMessageFor(x=>x.Code, null, new{@class="error-message"})
+        <br/>
+        
+        @Html.LabelFor(x=>x.Name, "Name")
+        <br/>
+        @Html.TextBoxFor(x => x.Name, null, new { placeholder = "Enter course name" })
+        <br/>
+        @Html.ValidationMessageFor(x => x.Name, null, new { @class = "error-message" })
+        <br/>
+        
+        @Html.LabelFor(x=>x.Credit, "Credit")
+        <br/>
+        @Html.TextBoxFor(x => x.Credit, null, new { placeholder = "Enter course credit" })
+        <br/>
+        @Html.ValidationMessageFor(x => x.Credit, null, new { @class = "error-message" })
+        <br/>
+        
+        @Html.LabelFor(x=>x.Description, "Description")
+        <br/>
+        @Html.TextBoxFor(x=>x.Description, null, new {placeholder="Enter course description"})
+        <br/>
+        
+        @Html.LabelFor(x=>x.DepartmentId, "Department")
+        <br/>
+        @Html.DropDownListFor(x => x.DepartmentId, new SelectList(ViewBag.DepartmentId, "Value", "Text"))
+        <br/>
+        @Html.ValidationMessageFor(x=>x.DepartmentId, null, new{@class="error-message"})
+        <br/>
+        
+        @Html.LabelFor(x=>x.SemesterId, "Semester")
+        <br/>
+        @Html.DropDownListFor(x => x.SemesterId, new SelectList(ViewBag.SemesterId, "Value", "Text"))
+        <br/>
+        @Html.ValidationMessageFor(x=>x.SemesterId, null, new{@class="error-message"})
+        <br/>
+        
+        <input type="submit" value="Save"/>
+    }
+
+</div>
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+

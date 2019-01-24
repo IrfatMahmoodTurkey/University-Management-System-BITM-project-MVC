@@ -1,0 +1,176 @@
+﻿@using UniversityManagementSystemWebApp.Models.ViewModel
+@model UniversityManagementSystemWebApp.Models.Student
+
+@{
+    ViewBag.Title = "RegisterStudent";
+}
+
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Contents/bootstrap-datepicker3.min.css" rel="stylesheet" />
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+@* validation message color *@
+<style>
+    .error-message {
+        color: red;
+    }
+</style>
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("RegisterStudent","Student")">Register Student</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Enroll Course", "EnrollCourseForStudents", "Student")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>Register Student</h3>
+<p>Register or Save new Student</p>
+<hr />
+
+<div class="form-body">
+
+    @* for show message after button click *@
+
+    @if (ViewBag.Response == "Empty")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Saved!</strong> Please fill up all fields correctly.
+        </div>
+    }
+    else if (ViewBag.Response == "Exists")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Can not Saved!</strong> Email already exists.
+        </div>
+    }
+    else if (ViewBag.Response == "Success")
+    {
+        <div class="alert alert-success alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> New Student Registered successfully.
+        </div>
+    }
+    else if (ViewBag.Response == "Failed")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong> An error occured during register student.
+        </div>
+    }
+
+    @* start form (RegisterStudent) *@@using (Html.BeginForm())
+    {
+        @Html.LabelFor(x => x.Name, "Name")
+        <br />
+        @Html.TextBoxFor(x => x.Name, null, new { placeholder = "Enter Student Name" })
+        <br />
+        @Html.ValidationMessageFor(x => x.Name, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.Email, "Email")
+        <br />
+        @Html.TextBoxFor(x => x.Email, null, new { placeholder = "Enter Student Email" })
+        <br />
+        @Html.ValidationMessageFor(x => x.Email, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.ContactNo, "Contact No")
+        <br />
+        @Html.TextBoxFor(x => x.ContactNo, null, new { placeholder = "Enter Student Contact No" })
+        <br />
+        @Html.ValidationMessageFor(x => x.ContactNo, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.Date, "Date")
+        <br />
+        @Html.TextBoxFor(x => x.Date, null, new { id = "Date", autocomplete = "off" })
+        <br />
+        @Html.ValidationMessageFor(x => x.Date, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.Address, "Address")
+        <br />
+        @Html.TextBoxFor(x => x.Address, null, new { placeholder = "Enter Student Address" })
+        <br />
+        @Html.ValidationMessageFor(x => x.Address, null, new { @class = "error-message" })
+        <br />
+
+        @Html.LabelFor(x => x.DepartmentId, "Department")
+        <br />
+        @Html.DropDownListFor(x => x.DepartmentId, new SelectList(ViewBag.Departments, "Value", "Text"))
+        <br />
+        @Html.ValidationMessageFor(x => x.DepartmentId, null, new { @class = "error-message" })
+        <br />
+
+        <input type="submit" value="Register" />
+    }
+</div>
+<br/>
+
+@if (ViewBag.StudentInfo != null)
+{
+    StudentRegInfoViewModel item = ViewBag.StudentInfo;
+
+    <table id="table">
+        <thead>
+            <tr>
+                <td>RegNo</td>
+                <td>Name</td>
+                <td>Email</td>
+                <td>ContactNo</td>
+                <td>Address</td>
+                <td>Date</td>
+                <td>Department</td>
+            </tr>
+
+        </thead>
+        <tbody id="table-body">
+
+            <tr>
+                <td>@item.RegNo</td>
+                <td>@item.Name</td>
+                <td>@item.Email</td>
+                <td>@item.ContactNo</td>
+                <td>@item.Address</td>
+                <td>@item.Date</td>
+                <td>@item.Department</td>
+            </tr>
+
+        </tbody>
+    </table>
+}
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+
+<script>
+    $('#Date').datepicker({
+        format: "dd/mm/yyyy",
+        todayBtn: "linked",
+        daysOfWeekHighlighted: "5",
+        calendarWeeks: true,
+        autoclose: true,
+        todayHighlight: true,
+        toggleActive: true
+    });
+
+    $("#Date").datepicker('setDate', new Date());
+</script>

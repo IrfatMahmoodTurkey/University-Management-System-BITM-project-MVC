@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewBag.Title = "UnAllocateClassrooms";
+}
+
+<link href="~/Content/form-style.css" rel="stylesheet" />
+
+
+<!-- Top container -->
+<div id="all-head">
+    <span><h2>University Management System</h2></span>
+</div>
+
+@* navigation bar *@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="@Url.Action("UnAllocateClassrooms","UnAllocateAllClassrooms")">Unallocate classrooms</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="@Url.Action("Index","Home")">Home</a></li>
+            <li>@Html.ActionLink("Unassign Courses","UnAssignCourse","UnAssignCourse")</li>
+        </ul>
+    </div>
+</nav>
+
+
+<h3>Unallocate classrooms</h3>
+<p>Unallocate all classrooms from course allocation</p>
+<hr />
+
+<div class="form-body">
+    @* for show message after button click *@
+    @if (ViewBag.Response == "Success")
+    {
+        <div class="alert alert-success alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> Unallocated all classrooms successfully.
+        </div>
+    }
+    else if (ViewBag.Response == "Failed")
+    {
+        <div class="alert alert-danger alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Failed!</strong> An error occured during uallocate all classrooms.
+        </div>
+    }
+
+    @using (Html.BeginForm("UnAllocateClassrooms", "UnAllocateAllClassrooms", FormMethod.Post, new { onsubmit = "return show_alert();" }))
+    {
+        <input id="none" type="hidden" name="none" />
+        <input type="submit" value="Unallocate Rooms" />
+    }
+</div>
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+
+<script>
+    function show_alert() {
+        if (confirm("Do you want to Unallocate All Classrooms?")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
